@@ -65,7 +65,7 @@ func (c *clientImpl) connect(ctx context.Context) (*HandshakeInfo, error) {
 	}
 	// Wrap in Salamander implementation
 	if c.config.ObfuscationConfig.Obfuscation == "salamander" {
-		pktConn = Salamander{
+		pktConn = SalamanderConnection{
 			Connection: pktConn,
 			Key:        c.config.ObfuscationConfig.ObfuscationKey,
 		}
