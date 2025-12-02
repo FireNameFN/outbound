@@ -8,12 +8,19 @@ import (
 	"golang.org/x/crypto/blake2b"
 )
 
-type SalamanderConnection struct {
+type SalamanderPacketConn struct {
 	Connection net.PacketConn
 	Key        []byte
 }
 
-func (s SalamanderConnection) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
+func NewSalamanderPacketConn(conn net.PacketConn, key []byte) SalamanderPacketConn {
+	return SalamanderPacketConn{
+		Connection: conn,
+		Key:        key,
+	}
+}
+
+func (s SalamanderPacketConn) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	packet := make([]byte, len(p)+8)
 
 	n, addr, err = s.Connection.ReadFrom(packet)
@@ -33,7 +40,7 @@ func (s SalamanderConnection) ReadFrom(p []byte) (n int, addr net.Addr, err erro
 	return
 }
 
-func (s SalamanderConnection) WriteTo(p []byte, addr net.Addr) (n int, err error) {
+func (s SalamanderPacketConn) WriteTo(p []byte, addr net.Addr) (n int, err error) {
 	packet := make([]byte, len(p)+8)
 
 	rand.Read(packet[:8])
@@ -53,22 +60,22 @@ func (s SalamanderConnection) WriteTo(p []byte, addr net.Addr) (n int, err error
 	return
 }
 
-func (s SalamanderConnection) Close() error {
+func (s SalamanderPacketConn) Close() error {
 	return s.Connection.Close()
 }
 
-func (s SalamanderConnection) LocalAddr() net.Addr {
+func (s SalamanderPacketConn) LocalAddr() net.Addr {
 	return s.Connection.LocalAddr()
 }
 
-func (s SalamanderConnection) SetDeadline(t time.Time) error {
+func (s SalamanderPacketConn) SetDeadline(t time.Time) error {
 	return s.Connection.SetDeadline(t)
 }
 
-func (s SalamanderConnection) SetReadDeadline(t time.Time) error {
+func (s SalamanderPacketConn) SetReadDeadline(t time.Time) error {
 	return s.Connection.SetReadDeadline(t)
 }
 
-func (s SalamanderConnection) SetWriteDeadline(t time.Time) error {
+func (s SalamanderPacketConn) SetWriteDeadline(t time.Time) error {
 	return s.Connection.SetWriteDeadline(t)
 }
